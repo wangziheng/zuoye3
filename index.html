@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>幻灯片</title>
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+    }
+    ul,ol,li {
+        list-style-type: none;
+    }
+    /*导航栏*/
+    #nav {
+        margin-bottom: 10px;
+        height: 37px;
+        width: 348px;
+        border-top: 3px solid #000;
+        background: #f5f5f5;
+    }
+    #nav li{
+        width: 67px;
+        padding: 0;
+        float: left;
+        line-height: 37px;
+        text-align: center;
+        font-size: 16px;
+        font-family: "Microsoft YaHei", "微软雅黑","黑体";
+        border-right: 1px solid #d6d6d6;
+        border-bottom: 1px solid #d6d6d6;
+    }
+    #nav li.last{
+        border-right: none;
+        clear: right;
+    }
+    #nav li a{
+        color: #646464;
+        text-decoration: none;
+    }
+    #nav li:hover{
+        background: #fff;
+        border-bottom: none;
+    }
+    #nav li:hover a{
+        color: #000;
+    }
+    #nav li a:hover{
+        color: #8d0000;
+    }
+    #nav li.selected{
+        background-color: #fff;
+    }
+    #Focus_Count{
+        clear: both;
+    }
+    /*图片区*/
+
+    div.pic{
+        position: relative;
+        width: 338px;
+        height: 238px;
+    }
+    #focus_arr a{
+        position: absolute;
+        display: none;
+        top: 50%;
+        width: 31px;
+        height: 41px;
+        cursor: pointer;
+        margin-top: -21px;
+        z-index: 10;
+    }
+    div.pic:hover #focus_arr a{
+        display: block;
+        opacity: 0.6;
+    }
+    div.pic #focus_arr a:hover {
+        opacity: 1;
+    }
+    #left{
+        left: 0;
+        background: url(images/news_arr_l.png) no-repeat;
+    }
+    #right{
+        right: 0;
+        background: url(images/news_arr_r.png) no-repeat;
+    }
+    #Focus_Count li{
+        position: absolute;
+        overflow: hidden;
+        display: none;
+        width: 338px;
+        height: 238px;
+        border: 1px solid #4C4C4C;
+        border-bottom: 0px;
+    }
+    #Focus_Count .show{
+        display: block;
+    }
+}
+</style>
+
+
+</head>
+<body  onload="autoTabStart()">
+    <div id="slide" onmouseout="autoTabStart()" onmouseover="autoTabStop()">
+        <ol id="nav">
+            <li class="selected" onmouseover="navmouseover(this)"><a href="" >聚焦</a></li>
+            <li  onmouseover="navmouseover(this)"><a href="">热点</a></li>
+            <li  onmouseover="navmouseover(this)"><a href="">独家</a></li>
+            <li  onmouseover="navmouseover(this)"><a href="">奇趣</a></li>
+            <li class="last" onmouseover="navmouseover(this)"><a href="">军事</a></li>
+        </ol>
+        <div class="pic">
+            <div id="focus_arr">
+                <a id="left" href="javascript:void(0)" onmousedown="move(true)"></a>
+                <a id="right" href="javascript:void(0)" onmousedown="move(false)"></a>
+            </div>
+            <ul id="Focus_Count" >
+                <li class="show"><a href="http://news.sina.com.cn/"><img src="images/1.jpg" alt=""></a></li>
+                <li><a href="http://news.sina.com.cn/"><img src="images/2.jpg" alt=""></a></li>
+                <li><a href="http://news.sina.com.cn/"><img src="images/3.jpg" alt=""></a></li>
+                <li><a href="http://news.sina.com.cn/"><img src="images/4.jpg" alt=""></a></li>
+                <li><a href="http://news.sina.com.cn/"><img src="images/5.jpg" alt=""></a></li>
+            </ul>
+        </div>
+    </div>
+    <script type="text/javascript">
+    var arrWarp = document.getElementById("focus_arr");
+    var arrleft = document.getElementById("left");
+    var arrright = document.getElementById("right");
+    var nav = document.getElementById("nav").getElementsByTagName("li");
+    var cont = document.getElementById("Focus_Count").getElementsByTagName("li");
+
+    var len = cont.length,index,focusTimeHandler;
+    var getCurIndex = function () {
+        for(var i in nav)
+        {
+            if(nav[i].className.indexOf("selected") != -1)
+            {
+                return i;
+            }
+        }
+    }
+    function move(flag) {
+        index = getCurIndex();
+        if(!flag){
+            index++;
+            index %= len;
+        }
+        else{
+            index--;
+            if(index<0)
+            {
+                index = len - 1;
+            }
+        }
+        show(index);
+    }
+    var autoTabStart = function () {
+        focusTimeHandler = setInterval(function () {
+            move(false);
+        },3000);
+    }
+    var autoTabStop = function () {
+        clearInterval(focusTimeHandler);
+    }
+    var navmouseover = function(na){
+        if(na.className.indexOf('selected')!=-1)
+        {
+            return;
+        }
+        for(var i in nav)
+        {
+            if(nav[i] === na)
+            {
+                show(i);
+                return;
+            }
+        }
+    }
+    var show = function (index) {
+        for(var i in nav)
+        {
+            if(nav[i].className.indexOf('selected') != -1 && nav[i].className.indexOf('last') != -1)
+            {
+                nav[i].className = "last";
+                cont[i].className = "";
+                break;
+            }
+            else if(nav[i].className.indexOf('selected') != -1)
+            {
+                nav[i].className = "";
+                cont[i].className = "";
+                break;
+            }
+        }
+        cont[index].className = "show";
+        if(nav[index].className.indexOf('last') != -1)
+        {
+            nav[index].className = "last selected";
+        }
+        else{
+            nav[index].className = "selected";
+        }
+    }
+    </script>
+</body>
+</html>
